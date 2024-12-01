@@ -1,9 +1,12 @@
+package com.furryfriendshub.model;
+
+import com.furryfriendshub.util.IDGenerator;
+import com.furryfriendshub.config.MongoDBConnection;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,16 +14,14 @@ import org.slf4j.LoggerFactory;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Admin extends User {
 
     private static final Logger logger = LoggerFactory.getLogger(Admin.class); // Logger instance
 
     // Constructor for Admin class
     public Admin(String userName, String email, String password) {
-        super(userName, email, password);
+        super(userName, email, password, "Admin");
         this.userID = IDGenerator.generateId(IDGenerator.EntityType.ADMIN); // Admin-specific ID format
-        this.role = "Admin"; // Overriding role to Admin
     }
 
     // Admin-only method to access analytics

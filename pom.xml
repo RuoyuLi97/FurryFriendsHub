@@ -26,6 +26,13 @@
             <version>4.9.0</version>
         </dependency>
 
+        <!-- Spring Data MongoDB -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>4.4.0</version> 
+        </dependency>
+
         <!-- BSON Library -->
         <dependency>
             <groupId>org.mongodb</groupId>

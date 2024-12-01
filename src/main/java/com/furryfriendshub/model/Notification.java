@@ -1,3 +1,8 @@
+package com.furryfriendshub.model;
+
+import com.furryfriendshub.util.IDGenerator;
+import com.furryfriendshub.config.MongoDBConnection;
+import org.springframework.data.annotation.Id;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
@@ -16,7 +21,7 @@ import java.util.Date;
 public class Notification {
     private static final Logger logger = LoggerFactory.getLogger(Notification.class);
 
-    @Id // Marking forumPostID as the primary key (ID) for MongoDB
+    @Id // Marking notificationID as the primary key (ID) for MongoDB
     private String notificationID;
     private String senderID;
     private String receiverID;
@@ -30,7 +35,7 @@ public class Notification {
         this.senderID = senderID;
         this.receiverID = receiverID;
         this.content = content;
-        this.isRead = false
+        this.isRead = false;
         this.timestamp = new Date();  // Set timestamp to current time
     }
 

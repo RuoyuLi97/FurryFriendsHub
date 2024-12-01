@@ -1,3 +1,8 @@
+package com.furryfriendshub.model;
+
+import com.furryfriendshub.util.IDGenerator;
+import com.furryfriendshub.config.MongoDBConnection;
+import org.springframework.data.annotation.Id;
 import lombok.Data;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -12,7 +17,7 @@ public class AdoptionListing {
 
     private static final Logger logger = LoggerFactory.getLogger(AdoptionListing.class);
 
-    @Id // Marking forumPostID as the primary key (ID) for MongoDB
+    @Id // Marking listingID as the primary key (ID) for MongoDB
     private String listingID;
     private String petName;
     private String petType; // Type of pet (e.g., dog, cat)

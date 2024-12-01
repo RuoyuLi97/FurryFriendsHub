@@ -1,3 +1,8 @@
+package com.furryfriendshub.model;
+
+import com.furryfriendshub.util.IDGenerator;
+import com.furryfriendshub.config.MongoDBConnection;
+import org.springframework.data.annotation.Id;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import lombok.Getter;
@@ -16,12 +21,12 @@ import org.slf4j.LoggerFactory;
 public class User {
     private static final Logger logger = LoggerFactory.getLogger(User.class); // Logger instance
 
-    @Id // Marking forumPostID as the primary key (ID) for MongoDB
-    private String userID;
+    @Id // Marking userID as the primary key (ID) for MongoDB
+    protected String userID;
     private String userName;
     private String email;
     private String password;
-    private String role;
+    protected String role;
 
     // Constructor to initialize User with required information (only if needed
     // outside of Lombok)
