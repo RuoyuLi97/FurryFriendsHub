@@ -27,15 +27,17 @@ public class User {
     private String email;
     private String password;
     protected String role;
+    private String phoneNumber;
 
     // Constructor to initialize User with required information (only if needed
     // outside of Lombok)
-    public User(String userName, String email, String password, String role) {
+    public User(String userName, String email, String password, String role, String phoneNumber) {
         this.userID = IDGenerator.generateId(IDGenerator.EntityType.USER); // Generate User ID
         this.userName = userName;
         this.email = email;
         this.password = hashPassword(password); // Hash the password
         this.role = role;
+        this.phoneNumber = phoneNumber;
     }
 
     // Hash the password using BCrypt
@@ -65,7 +67,8 @@ public class User {
                 .append("userName", this.userName)
                 .append("email", this.email)
                 .append("password", this.password) // Store the hashed password
-                .append("role", this.role);
+                .append("role", this.role)
+                .append("phoneNumber", this.phoneNumber);
 
         // Insert the user document into the users collection
         usersCollection.insertOne(newUser);
@@ -90,7 +93,7 @@ public class User {
     }
 
     // Update user profile
-    public boolean updateProfile(String newUserName, String newEmail, String newPassword) {
+    public boolean updateProfile(String newUserName, String newEmail, String newPassword, String newPhoneNumber) {
         MongoDatabase database = MongoDBConnection.getDatabase();
         MongoCollection<Document> usersCollection = database.getCollection("users");
 
@@ -110,6 +113,9 @@ public class User {
         }
         if (newPassword != null) {
             userDoc.put("password", hashPassword(newPassword)); // Hash the new password before saving
+        }
+        if (newPhoneNumber != null) {
+            userDoc.put("phoneNumber", newPhoneNumber); //Update phone number if provided
         }
 
         // Save the updated document back into the collection
