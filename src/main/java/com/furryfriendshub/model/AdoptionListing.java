@@ -2,7 +2,6 @@ package com.furryfriendshub.model;
 
 import com.furryfriendshub.util.IDGenerator;
 import com.furryfriendshub.config.MongoDBConnection;
-import org.springframework.data.annotation.Id;
 import lombok.Data;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ public class AdoptionListing {
 
     private static final Logger logger = LoggerFactory.getLogger(AdoptionListing.class);
 
-    @Id // Marking listingID as the primary key (ID) for MongoDB
     private String listingID;
     private String petName;
     private String petType; // Type of pet (e.g., dog, cat)
@@ -28,18 +26,13 @@ public class AdoptionListing {
     private Boolean petNeuteredSpayed; // Neutered/spayed status (can be null if not provided)
     private Date createdAt; // Timestamp for when the listing was created
     private Date lastUpdatedAt; // Timestamp for when the listing was last updated
-    private boolean isAvailable; // Whether the pet is still available for adoption
+    private Boolean isAvailable; // Whether the pet is still available for adoption
 
     // Constructor to create a new adoption listing
-    public AdoptionListing(String petName, String petType, String description, String ownerID) {
-        this(petName, petType, description, ownerID, null, null, null);
-    }
-
-    // Overloaded constructor with optional petAge, petGender, and petNeuteredSpayed
+    // check if ownerID is in the database
     public AdoptionListing(String petName, String petType, String description, String ownerID,
             Integer petAge, String petGender, Boolean petNeuteredSpayed) {
-        this.listingID = IDGenerator.generateId(IDGenerator.EntityType.ADOPTION_LISTING); // Generate a unique listing
-                                                                                          // ID
+        this.listingID = IDGenerator.generateId(IDGenerator.EntityType.ADOPTION_LISTING); // Generate a unique listing id
         this.petName = petName;
         this.petType = petType;
         this.description = description;
@@ -66,7 +59,7 @@ public class AdoptionListing {
             )).first();
 
             if (existingListing != null) {
-                logger.warn("An adoption listing already exists for this pet: {} ({})", this.petName, this.petType);
+                logger.warn("Adoption listing already exists for this pet: {} ({})", this.petName, this.petType);
                 return false; // Return false if a listing with the same pet already exists
             }
 
@@ -78,8 +71,7 @@ public class AdoptionListing {
                     .append("ownerID", this.ownerID)
                     .append("petAge", this.petAge) // Pet age can be null if not provided
                     .append("petGender", this.petGender) // Pet gender can be null if not provided
-                    .append("petNeuteredSpayed", this.petNeuteredSpayed) // Pet neutered/spayed status can be null if
-                                                                         // not provided
+                    .append("petNeuteredSpayed", this.petNeuteredSpayed) // Pet neutered/spayed status can be null if not provided
                     .append("createdAt", this.createdAt)
                     .append("lastUpdatedAt", this.lastUpdatedAt)
                     .append("isAvailable", this.isAvailable);
@@ -95,44 +87,4 @@ public class AdoptionListing {
         }
     }
 
-    // Update an existing adoption listing
-    public boolean updateListing(String newDescription, boolean isAvailable,
-            Integer petAge, String petGender, Boolean petNeuteredSpayed) {
-        try {
-            MongoCollection<Document> collection = MongoDBConnection.getDatabase().getCollection("adoption_listings");
-
-            // Find the listing by listingID and update it
-            Document updatedListing = new Document("description", newDescription)
-                    .append("isAvailable", isAvailable)
-                    .append("petAge", petAge) // Update pet age if provided
-                    .append("petGender", petGender) // Update pet gender if provided
-                    .append("petNeuteredSpayed", petNeuteredSpayed) // Update neutered/spayed status if provided
-                    .append("lastUpdatedAt", new Date()); // Update the lastUpdatedAt timestamp
-
-            collection.replaceOne(Filters.eq("listingID", this.listingID), updatedListing);
-            logger.info("Adoption listing updated successfully with ID: {}", this.listingID);
-            return true;
-        } catch (Exception e) {
-            logger.error("Error updating adoption listing: ", e);
-            return false;
-        }
-    }
-
-    // Mark the listing as unavailable (pet has been adopted or listing is canceled)
-    public boolean markAsUnavailable() {
-        return updateListing(this.description, false, this.petAge, this.petGender, this.petNeuteredSpayed);
-    }
-
-    // Delete the adoption listing from the database
-    public static boolean deleteListing(String listingID) {
-        try {
-            MongoCollection<Document> collection = MongoDBConnection.getDatabase().getCollection("adoption_listings");
-            collection.deleteOne(Filters.eq("listingID", listingID));
-            logger.info("Adoption listing deleted successfully with ID: {}", listingID);
-            return true;
-        } catch (Exception e) {
-            logger.error("Error deleting adoption listing: ", e);
-            return false;
-        }
-    }
 }

@@ -1,11 +1,12 @@
 package com.furryfriendshub.util;
 
-import org.bson.types.ObjectId;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 public class IDGenerator {
 
     public enum EntityType {
-        ADMIN("AD"), 
         USER("US"), 
         NOTIFICATION("NO"), 
         ADOPTION_LISTING("AL"), 
@@ -24,7 +25,15 @@ public class IDGenerator {
 
     public static String generateId(EntityType entityType) {
         String prefix = entityType.getPrefix(); // Logical grouping by type
-        String objectId = new ObjectId().toHexString(); // Compact and MongoDB-friendly
-        return prefix + objectId;
+        
+        // Get current date in "yyyyMMdd" format
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String currentDate = sdf.format(new Date());
+
+        // Generate a UUID and extract the first 8 characters
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 8);
+
+        // Return the concatenated ID
+        return prefix + "_" + currentDate + "_" + uuid;
     }
 }
