@@ -2,6 +2,10 @@ package com.furryfriendshub;
 
 import com.furryfriendshub.model.*;
 import com.furryfriendshub.management.*;
+
+import java.util.List;
+import java.util.ArrayList;
+
 import com.furryfriendshub.config.MongoDBConnection;
 //import com.mongodb.client.MongoDatabase;
 //import com.furryfriendshub.util.IDGenerator;
@@ -24,6 +28,7 @@ public class FurryFriendsHubApplication {
         // Generate a forum post ID
         //String forumPostId = IDGenerator.generateId(IDGenerator.EntityType.FORUM_POST);
         //System.out.println("Generated Forum Post ID: " + forumPostId); // Should print something like FP2024120100012345
+
 
         // test case for User
         // User user = new User("JoeDoe", "JoeDoe@example.com", "123xyz", "User", "1234566789");
@@ -63,6 +68,7 @@ public class FurryFriendsHubApplication {
         //     System.out.println("User profile failed to delete!");
         // }
 
+
         // test case for AdoptionListing
         // Initialize a new AdoptionListing
         // AdoptionListing listing = new AdoptionListing("MINI", "dog", "A black dog, picked at near school.", "US_20241201_2fa89867", null, null, null);
@@ -92,10 +98,87 @@ public class FurryFriendsHubApplication {
         // else{
         //     System.out.println("Adoption listing failed to delete!");
         // }
+
         
         //test case for notification
+        // NotificationManagement notificationMgt = new NotificationManagement();
         
+        // boolean isCreated = notificationMgt.createNotification("AD_20241201_03b62e65", "US_20241201_4c3da852", "Welcome to Furry Friends Hub!");
+        // if (isCreated){
+        //     System.out.println("Notification created and saved successfully!");
+        // }
+        // else{
+        //     System.out.println("Notification failed to create or save!");
+        // }
 
+        // String notificationID = "NO_20241201_74644f92";
+        // boolean isUpdated = notificationMgt.updateNotification(notificationID, "Nihao from Furry Friends Hub! Welcome to our warm community!", null);
+        // if (isUpdated){
+        //     System.out.println("Notification updated successfully!");
+        // }
+        // else{
+        //     System.out.println("Notification failed to update!");
+        // }
+
+        // boolean isDeleted = notificationMgt.deleteNotification(notificationID);
+        // if (isDeleted){
+        //     System.out.println("Notification deleted successfully!");
+        // }
+        // else{
+        //     System.out.println("Notification failed to delete!");
+        // }
+
+        //test case for forum post
+        // ForumPost forumPost = new ForumPost("AD_20241201_03b62e65", "This is a forum post content", "Forum Post Title", new ArrayList<>());
+        // ForumPostManagement forumPostMgt = new ForumPostManagement();
+
+        // boolean isSaved = forumPostMgt.savePost(forumPost);
+        // if (isSaved){
+        //     System.out.println("Forum post saved successfully!");
+        // }
+        // else{
+        //     System.out.println("Forum post failed to save!");
+        // }
+
+        // String postID = "FP_20241202_ffc3ef3a";
+
+        // boolean isUpdated = forumPostMgt.updatePost(postID, "Updated content", List.of("tag1", "tag2"));
+        // if (isUpdated){
+        //     System.out.println("Forum post updated successfully!");
+        // }
+        // else{
+        //     System.out.println("Forum post failed to update!");
+        // }
+
+        // ForumPost retrievedPost = forumPostMgt.getPost(postID);
+        // System.out.println("Retrieved Forum Post by ID: " + retrievedPost);
+
+        // List<ForumPost> postsByTag = forumPostMgt.getPostsByTag("tag1");
+        // System.out.println("Posts retrieved by tag 'tag1': " + postsByTag);
+
+        // boolean isRead = forumPostMgt.markAsRead(postID);
+        // if (isRead){
+        //     System.out.println("Forum post was read successfully!");
+        // }
+        // else{
+        //     System.out.println("Forum post failed to be read!");
+        // }
+
+        // boolean isUnread = forumPostMgt.markAsUnread(postID);
+        // if (isUnread){
+        //     System.out.println("Forum post was unread successfully!");
+        // }
+        // else{
+        //     System.out.println("Forum post failed to be unread!");
+        // }
+
+        // boolean isDeleted = forumPostMgt.deletePost(postID);
+        // if (isDeleted){
+        //     System.out.println("Forum post deleted successfully!");
+        // }
+        // else{
+        //     System.out.println("Forum post failed to delete!");
+        // }
 
         // Close the connection when done
         MongoDBConnection.closeConnection();

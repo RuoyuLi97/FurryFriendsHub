@@ -94,7 +94,7 @@ public class ForumPostManagement {
     }
 
     // Retrieve a ForumPost by ID
-    public static ForumPost getPost(String postID) {
+    public ForumPost getPost(String postID) {
         try {
             MongoCollection<Document> collection = MongoDBConnection.getDatabase().getCollection("forumPosts");
             Document query = new Document("forumPostID", postID);
@@ -131,7 +131,7 @@ public class ForumPostManagement {
     }
 
     // Retrieve ForumPosts by tag
-    public static List<ForumPost> getPostsByTag(String tag) {
+    public List<ForumPost> getPostsByTag(String tag) {
         List<ForumPost> posts = new ArrayList<>();
         try {
             MongoCollection<Document> collection = MongoDBConnection.getDatabase().getCollection("forumPosts");
@@ -168,7 +168,7 @@ public class ForumPostManagement {
     }
 
     // Mark a post as read
-    public static boolean markAsRead(String postID) {
+    public boolean markAsRead(String postID) {
         try {
             MongoCollection<Document> collection = MongoDBConnection.getDatabase().getCollection("forumPosts");
             Document updateDocument = new Document("isRead", true)

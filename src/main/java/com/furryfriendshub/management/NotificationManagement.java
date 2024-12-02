@@ -54,7 +54,7 @@ public class NotificationManagement {
     }
 
     // Update a notification
-    public static boolean updateNotification(String notificationID, String newContent, Boolean isRead) {
+    public boolean updateNotification(String notificationID, String newContent, Boolean isRead) {
         try {
             MongoCollection<Document> collection = MongoDBConnection.getDatabase().getCollection("notifications");
 
