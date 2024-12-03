@@ -8,22 +8,31 @@ import java.awt.event.ActionListener;
 public class ButtonEditor extends DefaultCellEditor {
     private String currentListingID;
     private ActionHandler actionHandler;
+    private JButton actionButton;
 
     public ButtonEditor(ActionHandler actionHandler) {
-        super(new JComboBox<>(new String[] {"Edit", "Delete"}));
+        super(new JCheckBox()); // Placeholder, we are using a button instead
         this.actionHandler = actionHandler;
 
-        // Set combobox properties
-        JComboBox comboBox = (JComboBox) getComponent();
-        comboBox.setEditable(false);
-        comboBox.setMaximumRowCount(2);
-        comboBox.addActionListener(new ActionListener() {
+        actionButton = new JButton("Edit/Delete");
+        actionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedOption = (String) comboBox.getSelectedItem();
-                if ("Edit".equals(selectedOption)) {
+                // Show confirmation dialog with options to "Edit" or "Delete"
+                int option = JOptionPane.showOptionDialog(
+                        null,
+                        "Would you like to edit or delete this user?",
+                        "Select Action",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null,
+                        new String[]{"Edit", "Delete"},
+                        "Edit" // Default selection
+                );
+
+                if (option == 0) { // Edit option selected
                     actionHandler.editListing(currentListingID);
-                } else if ("Delete".equals(selectedOption)) {
+                } else if (option == 1) { // Delete option selected
                     actionHandler.deleteListing(currentListingID);
                 }
             }
@@ -38,6 +47,7 @@ public class ButtonEditor extends DefaultCellEditor {
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         currentListingID = (String) table.getValueAt(row, 0); // Assume Listing ID is in column 0
-        return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+        actionButton.setText("Edit/Delete"); // Reset button text
+        return actionButton;
     }
 }

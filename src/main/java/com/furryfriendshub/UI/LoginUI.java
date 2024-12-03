@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
+
+import com.furryfriendshub.UI.Dashboard.Dashboard;
 import com.furryfriendshub.config.MongoDBConnection;
 import com.furryfriendshub.management.UserManagement;
 
@@ -13,6 +15,9 @@ public class LoginUI {
         JFrame frame = new JFrame("Login UI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 500);
+        // Center the window on the screen
+        frame.setLocationRelativeTo(null);
+
         frame.setLayout(new GridLayout(1, 2)); // Split layout into two sections
 
         // Left panel: Login section
@@ -62,7 +67,8 @@ public class LoginUI {
             if (isValidUser) {
                 JOptionPane.showMessageDialog(frame, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 frame.dispose();
-                new UserAccountUI(username); // Open UserAccountUI and pass the username
+                Dashboard dashboard = new Dashboard();
+                dashboard.initialize(); // Navigate to the dashboard
             } else {
                 JOptionPane.showMessageDialog(frame, "Invalid username or password!", "Error",
                         JOptionPane.ERROR_MESSAGE);

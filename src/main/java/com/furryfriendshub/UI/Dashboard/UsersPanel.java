@@ -30,11 +30,11 @@ public class UsersPanel extends JPanel implements ActionHandler {
         userTable = new JTable(tableModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;  // Make all columns non-editable
+                return column == 7;  // Only allow editing in the "Operation" column
             }
         };
 
-        // Set ButtonRenderer and ButtonEditor for "Operation" column
+        // Set ActionButtonRenderer and ActionButtonEditor for the "Operation" column
         userTable.getColumnModel().getColumn(7).setCellRenderer(new ButtonRenderer());
         userTable.getColumnModel().getColumn(7).setCellEditor(new ButtonEditor(this));
 

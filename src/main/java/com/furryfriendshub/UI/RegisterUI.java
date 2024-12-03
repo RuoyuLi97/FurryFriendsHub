@@ -1,10 +1,8 @@
 package com.furryfriendshub.UI;
 
-import com.furryfriendshub.util.IDGenerator;
+import com.furryfriendshub.management.UserManagement;
+import com.furryfriendshub.model.User;
 import com.furryfriendshub.UI.Dashboard.Dashboard;
-import com.furryfriendshub.config.MongoDBConnection;
-import com.mongodb.client.MongoCollection;
-import org.bson.Document;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +19,10 @@ public class RegisterUI {
         // Create the main frame
         frame = new JFrame("Registration Form");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 500);
+        frame.setSize(900, 500);
+        // Center the window on the screen
+        frame.setLocationRelativeTo(null);
+
         frame.setLayout(new GridLayout(1, 2)); // Divide into two parts using GridLayout
 
         // Left panel
@@ -126,18 +127,13 @@ public class RegisterUI {
         rightPanel.add(registerButton, gbc);
 
         // Button listener for Register Button
-        registerButton.addActionListener(e -> {
-            // Navigate to Dashboard
-            frame.dispose(); // Close the registration form window
-            Dashboard dashboard = new Dashboard();
-            dashboard.initialize(); // Initialize the dashboard
-        });
+        registerButton.addActionListener(e -> registration());
 
         // Display the frame
         frame.setVisible(true);
     }
 
-    private void registerUser() {
+    private void registration() {
         try {
             // Get input data
             String username = usernameField.getText();
@@ -153,27 +149,21 @@ public class RegisterUI {
                 return;
             }
 
-            // Generate a unique userID
-            String userID = IDGenerator.generateId(IDGenerator.EntityType.USER);
+            // Register the user via UserManagement
+            User newUser = new User(username, email, password, userType, phone);
+            UserManagement newUserMgt = new UserManagement();
+            boolean success = newUserMgt.register(newUser);
 
-            // Save new user information to MongoDB
-            MongoCollection<Document> usersCollection = MongoDBConnection.getDatabase().getCollection("users");
-            Document newUser = new Document("userID", userID)
-                    .append("userName", username)
-                    .append("email", email)
-                    .append("password", password)
-                    .append("phoneNumber", phone)
-                    .append("userType", userType)
-                    .append("registeredAt", new java.util.Date()); // Add registration date
-            usersCollection.insertOne(newUser);
-
-            // Display success message
-            JOptionPane.showMessageDialog(frame, "Registration successful! Your User ID is: " + userID, "Success",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-            // Navigate to UserAccountUI
-            frame.dispose(); // Close the registration window
-            new UserAccountUI(username); // Navigate to UserAccountUI with the registered username
+            if (success) {
+                JOptionPane.showMessageDialog(frame, "Registration successful!", "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
+                frame.dispose(); // Close the registration form window
+                Dashboard dashboard = new Dashboard();
+                dashboard.initialize(); // Navigate to the dashboard
+            } else {
+                JOptionPane.showMessageDialog(frame, "Registration failed. Try again.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Error occurred during registration: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);

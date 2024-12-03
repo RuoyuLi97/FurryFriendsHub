@@ -7,6 +7,7 @@ import java.util.UUID;
 public class IDGenerator {
 
     public enum EntityType {
+        ADMIN("AD"),
         USER("US"), 
         NOTIFICATION("NO"), 
         ADOPTION_LISTING("AL"), 
