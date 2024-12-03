@@ -1,7 +1,5 @@
 package com.furryfriendshub.UI.Components;
 
-import com.furryfriendshub.UI.Dashboard.ListingsPanel;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
