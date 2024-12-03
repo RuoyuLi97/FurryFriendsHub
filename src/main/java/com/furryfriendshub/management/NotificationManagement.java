@@ -7,7 +7,10 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class NotificationManagement {
     private static final Logger logger = LoggerFactory.getLogger(NotificationManagement.class);
@@ -106,4 +109,59 @@ public class NotificationManagement {
             return false;
         }
     }
+
+    // Get all notifications from the database
+    public List<Notification> getAllNotifications() {
+        List<Notification> notifications = new ArrayList<>();
+        try {
+            MongoCollection<Document> collection = MongoDBConnection.getDatabase().getCollection("notifications");
+
+            // Fetch all notifications
+            for (Document doc : collection.find()) {
+                Notification notification = new Notification(
+                        doc.getString("senderID"),
+                        doc.getString("receiverID"),
+                        doc.getString("content")
+                );
+                notification.setNotificationID(doc.getString("notificationID"));
+                notification.setIsRead(doc.getBoolean("isRead"));
+                notification.setTimestamp(doc.getDate("timestamp"));
+                notifications.add(notification);
+            }
+            logger.info("Retrieved all notifications.");
+        } catch (Exception e) {
+            logger.error("Error fetching notifications.", e);
+        }
+        return notifications;
+    }
+
+    // Get notification by notificationID
+    public Notification getNotificationByID(String notificationID) {
+        Notification notification = null;
+        try {
+            MongoCollection<Document> collection = MongoDBConnection.getDatabase().getCollection("notifications");
+    
+            // Query the collection for the notification with the specified notificationID
+            Document query = new Document("notificationID", notificationID);
+            Document doc = collection.find(query).first();  // Fetch the first matching document
+    
+            // If a notification is found, map it to a Notification object
+            if (doc != null) {
+                notification = new Notification(
+                        doc.getString("senderID"),
+                        doc.getString("receiverID"),
+                        doc.getString("content")
+                );
+                notification.setNotificationID(doc.getString("notificationID"));
+                notification.setIsRead(doc.getBoolean("isRead"));
+                notification.setTimestamp(doc.getDate("timestamp"));
+                logger.info("Retrieved notification with ID: " + notificationID);
+            } else {
+                logger.warn("Notification with ID: " + notificationID + " not found.");
+            }
+        } catch (Exception e) {
+            logger.error("Error fetching notification with ID: " + notificationID, e);
+        }
+        return notification;
+    }    
 }

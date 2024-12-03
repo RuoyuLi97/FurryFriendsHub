@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.furryfriendshub.config.MongoDBConnection;
 import com.furryfriendshub.model.ForumPost;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
@@ -51,7 +52,7 @@ public class ForumPostManagement {
     }
 
     // Update an existing ForumPost
-    public boolean updatePost(String postID, String newContent, List<String> newTags) {
+    public boolean updatePost(String postID, String newTitle, String newContent, List<String> newTags) {
         MongoDatabase database = MongoDBConnection.getDatabase();
         MongoCollection<Document> postsCollection = database.getCollection("forumPosts");
         
@@ -60,6 +61,10 @@ public class ForumPostManagement {
         if (postDoc == null) {
             logger.error("Forum post with ID {} not found.", postID);
             return false; // Forum post not found
+        }
+
+        if (newTitle != null && !newTitle.isEmpty()) {
+            postDoc.put("titel", newTitle);
         }
 
         if (newContent != null && !newContent.isEmpty()) {
@@ -128,6 +133,45 @@ public class ForumPostManagement {
             logger.error("Error retrieving forum post: ", e);
         }
         return null;
+    }
+
+    // Retrieve all ForumPosts
+    public List<ForumPost> getAllPosts() {
+        List<ForumPost> forumPosts = new ArrayList<>();
+        try {
+            MongoCollection<Document> collection = MongoDBConnection.getDatabase().getCollection("forumPosts");
+            FindIterable<Document> documents = collection.find();  // Retrieve all documents in the "forumPosts" collection
+
+            for (Document doc : documents) {
+                String postID = doc.getString("forumPostID");
+                String userID = doc.getString("userID");
+                String content = doc.getString("content");
+                String title = doc.getString("title");
+
+                // Safely cast the tags field with type checking
+                Object tagsObj = doc.get("tags");
+                List<String> tags = new ArrayList<>();
+                if (tagsObj instanceof List) {
+                    tags = (List<String>) tagsObj;  // Safe cast
+                } else {
+                    logger.warn("Tags field is not of type List<String>.");
+                }
+
+                ForumPost forumPost = new ForumPost(userID, content, title, tags);
+                forumPost.setForumPostID(postID);
+                forumPost.setCreatedAt(doc.getDate("createdAt"));
+                forumPost.setUpdatedAt(doc.getDate("updatedAt"));
+                forumPost.setIsRead(doc.getBoolean("isRead"));
+                forumPost.setLastReadAt(doc.getDate("lastReadAt"));
+
+                forumPosts.add(forumPost);  // Add the post to the list
+            }
+
+            logger.info("All forum posts retrieved successfully.");
+        } catch (Exception e) {
+            logger.error("Error retrieving all forum posts: ", e);
+        }
+        return forumPosts;
     }
 
     // Retrieve ForumPosts by tag

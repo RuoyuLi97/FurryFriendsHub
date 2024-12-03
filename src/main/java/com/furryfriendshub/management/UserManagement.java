@@ -3,13 +3,16 @@ package com.furryfriendshub.management;
 import com.furryfriendshub.config.MongoDBConnection;
 import com.furryfriendshub.model.User;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class UserManagement {
     private static final Logger logger = LoggerFactory.getLogger(UserManagement.class);
@@ -73,19 +76,31 @@ public class UserManagement {
     }
 
     // Update a user profile
-    public boolean updateProfile(String userID, String newUserName, String newEmail, String newPassword, String newPhoneNumber) {
+    public Boolean updateProfile(User user) {
+        // Retrieve user data from the User object
+        String userID = user.getUserID();
+        String newUserName = user.getUserName();
+        String newEmail = user.getEmail();
+        String newPassword = user.getPassword();
+        String newPhoneNumber = user.getPhoneNumber();
+        String newRole = user.getRole();
+    
+        // Find the user document in the database
         Document userDoc = usersCollection.find(new Document("userID", userID)).first();
         if (userDoc == null) {
             logger.error("User with ID {} not found.", userID);
             return false;
         }
-
+    
+        // Prepare the updates
         Document updates = new Document();
         if (newUserName != null && !newUserName.isEmpty()) updates.append("userName", newUserName);
         if (newEmail != null && !newEmail.isEmpty()) updates.append("email", newEmail);
         if (newPassword != null && !newPassword.isEmpty()) updates.append("password", hashPassword(newPassword));
         if (newPhoneNumber != null && !newPhoneNumber.isEmpty()) updates.append("phoneNumber", newPhoneNumber);
-
+        if (newRole != null && !newRole.isEmpty()) updates.append("role", newRole);
+    
+        // If there are updates, apply them
         if (!updates.isEmpty()) {
             updates.append("lastUpdatedAt", new Date());
             usersCollection.updateOne(Filters.eq("userID", userID), new Document("$set", updates));
@@ -94,6 +109,61 @@ public class UserManagement {
         }
         return false;
     }
+    
+
+    // Add this method to the UserManagement class
+    public List<User> getAllUsers() {
+        List<User> usersList = new ArrayList<>();
+        
+        // Retrieve all documents from the "users" collection
+        MongoDatabase database = MongoDBConnection.getDatabase();
+        MongoCollection<Document> collection = database.getCollection("users");
+
+        for (Document doc : collection.find()) {
+            // Extract fields from the document and create User objects
+            String userID = doc.getString("userID");
+            String userName = doc.getString("userName");
+            String email = doc.getString("email");
+            String password = doc.getString("password");
+            String role = doc.getString("role");
+            String phoneNumber = doc.getString("phoneNumber");
+            Date registeredAt = doc.getDate("registeredAt");
+            Date lastLoginAt = doc.getDate("lastLoginAt");
+
+            // Create a User object and add to the list
+            User user = new User(userID, userName, email, password, role, phoneNumber, registeredAt, lastLoginAt);
+            usersList.add(user);
+        }
+        
+        return usersList;
+    }
+
+    public User getUserByID(String userID) {
+        // Retrieve the user by userID from the "users" collection
+        MongoDatabase database = MongoDBConnection.getDatabase();
+        MongoCollection<Document> collection = database.getCollection("users");
+    
+        // Find the document with the specified userID
+        Document doc = collection.find(Filters.eq("userID", userID)).first();
+    
+        if (doc != null) {
+            // Extract fields from the document and create a User object
+            String userName = doc.getString("userName");
+            String email = doc.getString("email");
+            String password = doc.getString("password");
+            String role = doc.getString("role");
+            String phoneNumber = doc.getString("phoneNumber");
+            Date registeredAt = doc.getDate("registeredAt");
+            Date lastLoginAt = doc.getDate("lastLoginAt");
+    
+            // Return the user object
+            return new User(userID, userName, email, password, role, phoneNumber, registeredAt, lastLoginAt);
+        }
+    
+        // Return null if the user with the given userID is not found
+        return null;
+    }
+    
 
     // Delete a user
     public boolean delete(String userID) {
