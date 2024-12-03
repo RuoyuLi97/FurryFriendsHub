@@ -1,6 +1,7 @@
 package com.furryfriendshub.UI;
 
 import com.furryfriendshub.util.IDGenerator;
+import com.furryfriendshub.UI.Dashboard.Dashboard;
 import com.furryfriendshub.config.MongoDBConnection;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
@@ -17,32 +18,65 @@ public class RegisterUI {
     private JComboBox<String> userTypeComboBox;
 
     public RegisterUI() {
-        // 创建主窗口
-        frame = new JFrame("User Registration");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(600, 400);
-        frame.setLayout(new GridLayout(1, 2));
+        // Create the main frame
+        frame = new JFrame("Registration Form");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1000, 500);
+        frame.setLayout(new GridLayout(1, 2)); // Divide into two parts using GridLayout
 
-        // 左侧图像面板
-        JPanel leftPanel = new JPanel();
-        JLabel imageLabel = new JLabel(new ImageIcon("path_to_image.jpg")); // 替换为您的图片路径
-        leftPanel.add(imageLabel);
+        // Left panel
+        JPanel leftPanel = new JPanel(new GridBagLayout());
+        leftPanel.setBackground(new Color(135, 174, 195));
+        frame.add(leftPanel);
 
-        // 右侧注册表单
-        JPanel rightPanel = new JPanel(new GridBagLayout());
+        // Left panel content
+        JLabel logo = new JLabel("LOGO", SwingConstants.CENTER);
+        logo.setFont(new Font("Arial", Font.BOLD, 20));
+        logo.setOpaque(true);
+        logo.setBackground(new Color(135, 174, 195));
+        logo.setForeground(Color.WHITE);
+
+        JLabel welcomeText = new JLabel("Welcome Back!", SwingConstants.CENTER);
+        welcomeText.setFont(new Font("Arial", Font.BOLD, 24));
+
+        JButton loginButton = new JButton("LOG IN");
+        loginButton.setPreferredSize(new Dimension(120, 40));
+
+        // Login button click event
+        loginButton.addActionListener(e -> {
+            frame.dispose(); // Close the current window
+            // Logic for navigating to the login page
+        });
+
+        // Layout manager
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        leftPanel.add(logo, gbc);
 
-        // 标题
-        JLabel createAccountTitle = new JLabel("Create Your Account");
-        createAccountTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        gbc.gridy = 1;
+        leftPanel.add(welcomeText, gbc);
+
+        gbc.gridy = 2;
+        leftPanel.add(loginButton, gbc);
+
+        // Right panel
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        frame.add(rightPanel);
+
+        // Right panel title
+        JLabel createAccountTitle = new JLabel("CREATE ACCOUNT", SwingConstants.CENTER);
+        createAccountTitle.setFont(new Font("Arial", Font.BOLD, 24));
+
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         rightPanel.add(createAccountTitle, gbc);
 
-        // 用户名
+        // Username
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridy = 1;
@@ -51,7 +85,7 @@ public class RegisterUI {
         usernameField = new JTextField(15);
         rightPanel.add(usernameField, gbc);
 
-        // 邮箱
+        // Email
         gbc.gridx = 0;
         gbc.gridy = 2;
         rightPanel.add(new JLabel("Email (*):"), gbc);
@@ -59,7 +93,7 @@ public class RegisterUI {
         emailField = new JTextField(15);
         rightPanel.add(emailField, gbc);
 
-        // 密码
+        // Password
         gbc.gridx = 0;
         gbc.gridy = 3;
         rightPanel.add(new JLabel("Password (*):"), gbc);
@@ -67,7 +101,7 @@ public class RegisterUI {
         passwordField = new JPasswordField(15);
         rightPanel.add(passwordField, gbc);
 
-        // 电话号码
+        // Phone number
         gbc.gridx = 0;
         gbc.gridy = 4;
         rightPanel.add(new JLabel("Phone Number (*):"), gbc);
@@ -75,7 +109,7 @@ public class RegisterUI {
         phoneField = new JTextField(15);
         rightPanel.add(phoneField, gbc);
 
-        // 用户类型
+        // User type
         gbc.gridx = 0;
         gbc.gridy = 5;
         rightPanel.add(new JLabel("User Type:"), gbc);
@@ -83,7 +117,7 @@ public class RegisterUI {
         userTypeComboBox = new JComboBox<>(new String[] { "Admin", "User" });
         rightPanel.add(userTypeComboBox, gbc);
 
-        // 注册按钮
+        // Register button
         JButton registerButton = new JButton("Register");
         gbc.gridx = 0;
         gbc.gridy = 6;
@@ -91,63 +125,59 @@ public class RegisterUI {
         gbc.anchor = GridBagConstraints.CENTER;
         rightPanel.add(registerButton, gbc);
 
-        // 按钮监听器
-        registerButton.addActionListener(e -> registerUser());
+        // Button listener for Register Button
+        registerButton.addActionListener(e -> {
+            // Navigate to Dashboard
+            frame.dispose(); // Close the registration form window
+            Dashboard dashboard = new Dashboard();
+            dashboard.initialize(); // Initialize the dashboard
+        });
 
-        // 添加面板到主窗口
-        frame.add(leftPanel);
-        frame.add(rightPanel);
+        // Display the frame
         frame.setVisible(true);
     }
 
     private void registerUser() {
         try {
-            // 获取输入信息
+            // Get input data
             String username = usernameField.getText();
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
             String phone = phoneField.getText();
             String userType = (String) userTypeComboBox.getSelectedItem();
 
-            // 验证输入
+            // Validate input
             if (username.isEmpty() || email.isEmpty() || password.isEmpty() || phone.isEmpty() || userType == null) {
                 JOptionPane.showMessageDialog(frame, "Please fill out all required fields.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // 生成唯一的 userID
+            // Generate a unique userID
             String userID = IDGenerator.generateId(IDGenerator.EntityType.USER);
 
-            // 将新用户信息保存到 MongoDB
+            // Save new user information to MongoDB
             MongoCollection<Document> usersCollection = MongoDBConnection.getDatabase().getCollection("users");
             Document newUser = new Document("userID", userID)
                     .append("userName", username)
                     .append("email", email)
                     .append("password", password)
                     .append("phoneNumber", phone)
-                    .append("userType", userType);
+                    .append("userType", userType)
+                    .append("registeredAt", new java.util.Date()); // Add registration date
             usersCollection.insertOne(newUser);
 
-            // 显示注册成功的消息
+            // Display success message
             JOptionPane.showMessageDialog(frame, "Registration successful! Your User ID is: " + userID, "Success",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            // 清空表单字段
-            clearForm();
+            // Navigate to UserAccountUI
+            frame.dispose(); // Close the registration window
+            new UserAccountUI(username); // Navigate to UserAccountUI with the registered username
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Error occurred during registration: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }
-
-    private void clearForm() {
-        usernameField.setText("");
-        emailField.setText("");
-        passwordField.setText("");
-        phoneField.setText("");
-        userTypeComboBox.setSelectedIndex(0);
-    }
 }
-
