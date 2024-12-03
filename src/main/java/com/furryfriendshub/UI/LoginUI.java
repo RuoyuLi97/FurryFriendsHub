@@ -2,11 +2,8 @@ package com.furryfriendshub.UI;
 
 import javax.swing.*;
 import java.awt.*;
-import com.mongodb.client.MongoCollection;
-import org.bson.Document;
 
 import com.furryfriendshub.UI.Dashboard.Dashboard;
-import com.furryfriendshub.config.MongoDBConnection;
 import com.furryfriendshub.management.UserManagement;
 
 public class LoginUI {
